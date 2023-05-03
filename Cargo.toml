@@ -8,3 +8,6 @@ repository = "https://github.com/khonsulabs/alot"
 readme = "./README.md"
 
 [dependencies]
+
+[workspace]
+members = ["xtask"]
