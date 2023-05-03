@@ -1,6 +1,7 @@
-use khonsu_tools::universal::clap::Parser;
-use khonsu_tools::universal::{anyhow, DefaultConfig};
-use khonsu_tools::Commands;
+use khonsu_tools::{
+    universal::{anyhow, clap::Parser, DefaultConfig},
+    Commands,
+};
 
 fn main() -> anyhow::Result<()> {
     Commands::parse().execute::<Config>()
@@ -30,8 +31,7 @@ impl khonsu_tools::universal::code_coverage::Config for Config {
             String::from("test"),
             String::from("--workspace"),
             String::from("--all-targets"),
-            String::from("--features"),
-            String::from("std,serde"),
+            String::from("--all-features"),
         ]
     }
 }
