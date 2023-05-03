@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="alot"><title>alot - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="alot" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a368898de 2023-05-02)" data-search-js="search-618e954b235f6acc.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../alot/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../alot/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate alot</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.1.0</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">alot</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/alot/lib.rs.html#1-135">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="alot"><a href="#alot">alot</a></h2>
+<p>A set of collections for storing values in a map-like structure using generated
+unique keys. The base collection type, <code>Lots&lt;T&gt;</code>, returns a <code>LotId</code> for each
+stored value. The stored values can be retrieved or removed using their <code>LotId</code>.</p>
+<p>This collection provides insert and read performance comparable to <code>Vec&lt;T&gt;</code>, but
+does not guarantee anything about the order of the contained values.</p>
+<p>If ordering is needed, <code>OrderedLots&lt;T&gt;</code> is provided which tracks the order of
+elements while still allowing lookups by <code>LotId</code>. Removing a value by its
+<code>LotId</code> becomes an O(n) operation with this collection.</p>
+<h3 id="lotst-unordered-collection-of-t"><a href="#lotst-unordered-collection-of-t"><code>Lots&lt;T&gt;</code>: Unordered collection of T</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>alot::Lots;
+
+<span class="kw">let </span><span class="kw-2">mut </span>map = Lots::new();
+<span class="comment">// Similar to a Vec, push adds a new value to the collection.
+</span><span class="kw">let </span>greeting = map.push(<span class="string">&quot;hello, world&quot;</span>);
+<span class="comment">// Prints: Greeting: LotId { generation: 1, index: 0 }
+</span><span class="macro">println!</span>(<span class="string">&quot;Greeting: {greeting:?}&quot;</span>);
+<span class="comment">// Values can be retrieved by their LotId.
+</span><span class="macro">assert_eq!</span>(map[greeting], <span class="string">&quot;hello, world&quot;</span>);</code></pre></div>
+<h3 id="orderedlotst-ordered-collection-of-t"><a href="#orderedlotst-ordered-collection-of-t"><code>OrderedLots&lt;T&gt;</code>: Ordered collection of T</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>alot::OrderedLots;
+
+<span class="kw">let </span><span class="kw-2">mut </span>map = OrderedLots::new();
+<span class="comment">// Values stored in OrderedLots can be accessed by index or by their LotId.
+</span><span class="kw">let </span>c = map.push(<span class="string">&quot;c&quot;</span>);
+<span class="kw">let </span>a = map.push(<span class="string">&quot;a&quot;</span>);
+
+<span class="macro">assert_eq!</span>(map[c], map[<span class="number">0</span>]);
+
+<span class="comment">// With OrderedLots, values can be inserted as well as pushed.
+</span><span class="kw">let </span>b = map.insert(<span class="number">1</span>, <span class="string">&quot;b&quot;</span>);
+<span class="macro">assert_eq!</span>(map, <span class="kw-2">&amp;</span>[<span class="string">&quot;c&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;a&quot;</span>]);
+
+<span class="comment">// OrderedLots also provides sorting functions.
+</span>map.sort();
+<span class="macro">assert_eq!</span>(map, <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>]);</code></pre></div>
+<h3 id="what-separates-this-crate-from-others"><a href="#what-separates-this-crate-from-others">What separates this crate from others?</a></h3>
+<p>There are several approaches to “slot maps” or “generational arenas” or other
+similarly named structures. This crate takes two approaches that make it unique:</p>
+<ul>
+<li>No unsafe code.</li>
+<li><code>LotId</code> is a single <code>usize</code>. Most slot maps use <code>usize</code> for indicies, and an
+additional <code>usize</code> for the generation.</li>
+<li>Internally, the storage for each value only has an additional 2 bytes of
+overhead, excluding padding the compiler may add. Most generational maps must
+store a <code>usize</code> for the generation, and many incur an additional byte of
+overhead due to using <code>Option&lt;T&gt;</code>.</li>
+<li>The free list is a <code>Vec&lt;usize&gt;</code>, rather than attempting to reuse the empty
+slot’s space. This was chosen for these advantages:
+<ul>
+<li>Without unsafe, it’s impossible to fit 48 bits of index data in the Empty
+state without causing the <code>SlotData</code> enum to take up more space than it
+currently does when <code>size_of::&lt;T&gt;()</code> is less than the size of a <code>usize</code>. For
+example, the internal slot storage for <code>Lots&lt;u16&gt;</code> uses 4 bytes per value.</li>
+<li>Unless the collection is drained or undergoes large numbers of removals, the
+free list is usually short.</li>
+</ul>
+</li>
+</ul>
+<p>These design choices cause these limitations on this implementation:</p>
+<ul>
+<li>Collections are limited to 75% of the maximum <code>usize</code>. In general, this isn’t
+a real limitation as allocating a contiguous region of memory that spans 75%
+of the target architecture’s RAM isn’t practical. On a 64-bit platform,
+<code>Lots&lt;T&gt;</code> can hold 2^48 items – 281 trillion items.</li>
+<li>Compared to implementations that utilize a full <code>usize</code> for generations, this
+implementation will be more likely to return data for a stale ID due to the
+generation rotating.</li>
+<li>Collections that grow large and then shrink very small again in most
+situations will utilize more RAM than alternate solutions that use a
+linked-list approach to keeping track of free slots.</li>
+</ul>
+</div></details><h2 id="reexports" class="small-section-header"><a href="#reexports">Re-exports</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.OrderedLots"><code>pub use ordered::<a class="struct" href="ordered/struct.OrderedLots.html" title="struct alot::ordered::OrderedLots">OrderedLots</a>;</code></div></li><li><div class="item-name" id="reexport.Lots"><code>pub use unordered::<a class="struct" href="unordered/struct.Lots.html" title="struct alot::unordered::Lots">Lots</a>;</code></div></li></ul><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="ordered/index.html" title="mod alot::ordered">ordered</a></div><div class="desc docblock-short">An ordered collection of values, accessible by <a href="struct.LotId.html" title="struct alot::LotId"><code>LotId</code></a> or index.</div></li><li><div class="item-name"><a class="mod" href="unordered/index.html" title="mod alot::unordered">unordered</a></div><div class="desc docblock-short">An unordered collection of values, accessible by <a href="struct.LotId.html" title="struct alot::LotId"><code>LotId</code></a>.</div></li></ul><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Generation.html" title="struct alot::Generation">Generation</a></div></li><li><div class="item-name"><a class="struct" href="struct.LotId.html" title="struct alot::LotId">LotId</a></div><div class="desc docblock-short">A <code>LotId</code> is a single <code>usize</code>, encoding generation information in the top
+1/4 of the bits, and index information in the remaining bits. When compiling
+for a 64-bit platform, this equates to:</div></li></ul></section></div></main></body></html>

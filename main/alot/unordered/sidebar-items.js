@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Drain","DrainAll","EntryIter","IntoIter","Iter","Lots"],"trait":["DrainFilter"]};
