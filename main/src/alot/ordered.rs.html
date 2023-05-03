@@ -510,14 +510,24 @@
 <a href="#510" id="510">510</a>
 <a href="#511" id="511">511</a>
 <a href="#512" id="512">512</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::Vec;
-<span class="kw">use </span>alloc::{slice, vec};
-<span class="kw">use </span>core::cmp::Ordering;
-<span class="kw">use </span>core::fmt::Debug;
-<span class="kw">use </span>core::ops::{Index, IndexMut};
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::{slice, vec, vec::Vec};
+<span class="kw">use </span>core::{
+    cmp::Ordering,
+    fmt::Debug,
+    ops::{Index, IndexMut},
+};
 
-<span class="kw">use </span><span class="kw">crate</span>::unordered::{DrainAll, DrainFilter, Lots};
-<span class="kw">use </span><span class="kw">crate</span>::LotId;
+<span class="kw">use crate</span>::{
+    unordered::{DrainAll, DrainFilter, Lots},
+    LotId,
+};
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>OrderedLots&lt;T&gt; {
@@ -968,6 +978,10 @@
     map[first] = <span class="number">2</span>;
     <span class="macro">assert_eq!</span>(map[first], <span class="number">2</span>);
     map[<span class="number">0</span>] = <span class="number">3</span>;
+    <span class="comment">// PartialEq for array
+    </span><span class="macro">assert_eq!</span>(map, <span class="kw-2">&amp;</span>[<span class="number">3</span>]);
+    <span class="comment">// PartialEq for slice
+    </span><span class="macro">assert_eq!</span>(map, <span class="kw-2">&amp;</span>[<span class="number">3</span>][..]);
     <span class="kw">let </span>drain = map.drain().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
     <span class="macro">assert_eq!</span>(drain, <span class="kw-2">&amp;</span>[<span class="number">3</span>]);
     <span class="macro">assert!</span>(map.is_empty());
