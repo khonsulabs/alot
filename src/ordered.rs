@@ -1,11 +1,14 @@
-use alloc::vec::Vec;
-use alloc::{slice, vec};
-use core::cmp::Ordering;
-use core::fmt::Debug;
-use core::ops::{Index, IndexMut};
+use alloc::{slice, vec, vec::Vec};
+use core::{
+    cmp::Ordering,
+    fmt::Debug,
+    ops::{Index, IndexMut},
+};
 
-use crate::unordered::{DrainAll, DrainFilter, Lots};
-use crate::LotId;
+use crate::{
+    unordered::{DrainAll, DrainFilter, Lots},
+    LotId,
+};
 
 #[derive(Clone)]
 pub struct OrderedLots<T> {
@@ -456,6 +459,10 @@ fn basics() {
     map[first] = 2;
     assert_eq!(map[first], 2);
     map[0] = 3;
+    // PartialEq for array
+    assert_eq!(map, &[3]);
+    // PartialEq for slice
+    assert_eq!(map, &[3][..]);
     let drain = map.drain().collect::<Vec<_>>();
     assert_eq!(drain, &[3]);
     assert!(map.is_empty());
