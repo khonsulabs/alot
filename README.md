@@ -4,7 +4,7 @@
 ![alot is considered alpha](https://img.shields.io/badge/status-alpha-orange)
 [![crate version](https://img.shields.io/crates/v/alot.svg)](https://crates.io/crates/alot)
 [![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/alot/rust.yml?branch=main)](https://github.com/khonsulabs/alot/actions?query=workflow:Tests)
-[![HTML Coverage Report for `main`](https://khonsulabs.github.io/alot/coverage/badge.svg)]($pages-base$/coverage/)
+[![HTML Coverage Report for `main`](https://khonsulabs.github.io/alot/coverage/badge.svg)](https://khonsulabs.github.io/alot/coverage/)
 [![Documentation for `main`](https://img.shields.io/badge/docs-main-informational)](https://khonsulabs.github.io/alot/main/alot/)
 
 A set of collections for storing values in a map-like structure using generated
