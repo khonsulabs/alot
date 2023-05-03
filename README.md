@@ -1,5 +1,12 @@
 # alot
 
+![alot forbids unsafe code](https://img.shields.io/badge/unsafe-forbid-success)
+![alot is considered alpha](https://img.shields.io/badge/status-alpha-orange)
+[![crate version](https://img.shields.io/crates/v/alot.svg)](https://crates.io/crates/alot)
+[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/alot/rust.yml?branch=main)](https://github.com/khonsulabs/alot/actions?query=workflow:Tests)
+[![HTML Coverage Report for `main`](https://khonsulabs.github.io/alot/coverage/badge.svg)]($pages-base$/coverage/)
+[![Documentation for `main`](https://img.shields.io/badge/docs-main-informational)](https://khonsulabs.github.io/alot/main/alot/)
+
 A set of collections for storing values in a map-like structure using generated
 unique keys. The base collection type, `Lots<T>`, returns a `LotId` for each
 stored value. The stored values can be retrieved or removed using their `LotId`.
