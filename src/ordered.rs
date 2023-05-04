@@ -1,16 +1,21 @@
-use alloc::{slice, vec, vec::Vec};
-use core::{
-    cmp::Ordering,
-    fmt::Debug,
-    ops::{Index, IndexMut},
-};
+use alloc::vec::Vec;
+use alloc::{slice, vec};
+use core::cmp::Ordering;
+use core::fmt::Debug;
+use core::ops::{Index, IndexMut};
 
-use crate::{
-    unordered::{DrainAll, DrainFilter, Lots},
-    LotId,
-};
+use crate::unordered::{DrainAll, DrainFilter, Lots};
+use crate::LotId;
 
+/// A collection of `T` values that maintains the order of elements.
+///
+/// This collection can be accessed by index (`usize`) or the [`LotId`] it is
+/// assigned upon insertion or pushing.
+///
+/// This collection has Vec-like performance except when removing elements by
+/// [`LotId`], which is an O(n) operation.
 #[derive(Clone)]
+#[allow(clippy::module_name_repetitions)]
 pub struct OrderedLots<T> {
     slots: Lots<T>,
     order: Vec<LotId>,
@@ -24,7 +29,9 @@ impl<T> Default for OrderedLots<T> {
 }
 
 impl<T> OrderedLots<T> {
+    /// Returns a new, empty collection.
     #[inline]
+    #[must_use]
     pub const fn new() -> Self {
         Self {
             slots: Lots::new(),
@@ -32,7 +39,10 @@ impl<T> OrderedLots<T> {
         }
     }
 
+    /// Returns an empty collection that can hold `initial_capacity` values
+    /// without reallocation.
     #[inline]
+    #[must_use]
     pub fn with_capacity(initial_capacity: usize) -> Self {
         Self {
             slots: Lots::with_capacity(initial_capacity),
@@ -40,6 +50,8 @@ impl<T> OrderedLots<T> {
         }
     }
 
+    /// Adds `value` to the end of the collection, returning the value's unique
+    /// [`LotId`].
     #[inline]
     pub fn push(&mut self, value: T) -> LotId {
         let slot_id = self.slots.push(value);
@@ -47,6 +59,28 @@ impl<T> OrderedLots<T> {
         slot_id
     }
 
+    /// Removes the last element of the collection, if one is present.
+    #[inline]
+    #[must_use]
+    pub fn pop(&mut self) -> Option<T> {
+        self.pop_entry().map(|(_, v)| v)
+    }
+
+    /// Removes the last element of the collection, if one is present.
+    #[inline]
+    #[must_use]
+    pub fn pop_entry(&mut self) -> Option<(LotId, T)> {
+        self.order
+            .pop()
+            .and_then(|id| self.slots.remove(id).map(|v| (id, v)))
+    }
+
+    /// Inserts `value` at `offset` inside of the collection.
+    ///
+    /// # Panics
+    ///
+    /// This funciton panics if offset is greater than the length of the
+    /// collection.
     #[inline]
     pub fn insert(&mut self, offset: usize, value: T) -> LotId {
         // Before modifying the map, check the only logic condition that will
@@ -57,6 +91,10 @@ impl<T> OrderedLots<T> {
         slot_id
     }
 
+    /// Removes the value with the associated [`LotId`], if found.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
     #[inline]
     pub fn remove(&mut self, lot: LotId) -> Option<T> {
         let value = self.slots.remove(lot)?;
@@ -66,6 +104,8 @@ impl<T> OrderedLots<T> {
         Some(value)
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort()`] for more information.
     #[inline]
     pub fn sort(&mut self)
     where
@@ -74,30 +114,38 @@ impl<T> OrderedLots<T> {
         self.order.sort_by_key(|id| &self.slots[*id]);
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort_by()`] for more information.
     #[inline]
     pub fn sort_by<F: Fn(&T, &T) -> Ordering>(&mut self, comparison: F) {
         self.order
-            .sort_by(|a, b| comparison(&self.slots[*a], &self.slots[*b]))
+            .sort_by(|a, b| comparison(&self.slots[*a], &self.slots[*b]));
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort_by_key()`] for more information.
     #[inline]
     pub fn sort_by_key<K, F>(&mut self, mut f: F)
     where
         F: FnMut(&T) -> K,
         K: Ord,
     {
-        self.order.sort_by_key(|id| f(&self.slots[*id]))
+        self.order.sort_by_key(|id| f(&self.slots[*id]));
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort_by_cached_key()`] for more information.
     #[inline]
     pub fn sort_by_cached_key<K, F>(&mut self, mut f: F)
     where
         F: FnMut(&T) -> K,
         K: Ord,
     {
-        self.order.sort_by_cached_key(|id| f(&self.slots[*id]))
+        self.order.sort_by_cached_key(|id| f(&self.slots[*id]));
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort_unstable()`] for more information.
     #[inline]
     pub fn sort_unstable(&mut self)
     where
@@ -106,50 +154,81 @@ impl<T> OrderedLots<T> {
         self.order.sort_unstable_by_key(|id| &self.slots[*id]);
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort_unstable_by()`] for more
+    /// information.
     #[inline]
     pub fn sort_unstable_by<F: Fn(&T, &T) -> Ordering>(&mut self, comparison: F) {
         self.order
-            .sort_unstable_by(|a, b| comparison(&self.slots[*a], &self.slots[*b]))
+            .sort_unstable_by(|a, b| comparison(&self.slots[*a], &self.slots[*b]));
     }
 
+    /// Orders the elements in this collection leveraging the standard library's
+    /// sorting implementation. See [`slice::sort_unstable_by_key()`] for more
+    /// information.
     #[inline]
     pub fn sort_unstable_by_key<K, F>(&mut self, mut f: F)
     where
         F: FnMut(&T) -> K,
         K: Ord,
     {
-        self.order.sort_unstable_by_key(|id| f(&self.slots[*id]))
+        self.order.sort_unstable_by_key(|id| f(&self.slots[*id]));
     }
 
+    /// Looks up a previously stored value by its [`LotId`]. If the value hasn't
+    /// been removed, a reference will be returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
     #[inline]
+    #[must_use]
     pub fn get(&self, id: LotId) -> Option<&T> {
         self.slots.get(id)
     }
 
+    /// Looks up a previously stored value by its [`LotId`]. If the value hasn't
+    /// been removed, a mutable reference will be returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
     #[inline]
+    #[must_use]
     pub fn get_mut(&mut self, id: LotId) -> Option<&mut T> {
         self.slots.get_mut(id)
     }
 
+    /// Looks up a value by index. If `index` is greater than or equal to the
+    /// collections length, `None` will be returned.
     #[inline]
+    #[must_use]
     pub fn get_by_index(&self, index: usize) -> Option<&T> {
         self.order
             .get(index)
             .and_then(|index| self.slots.get(*index))
     }
 
+    /// Looks up a mutable reference to a value by index. If `index` is greater
+    /// than or equal to the collections length, `None` will be returned.
     #[inline]
+    #[must_use]
     pub fn get_mut_by_index(&mut self, index: usize) -> Option<&mut T> {
         self.order
             .get(index)
             .and_then(|index| self.slots.get_mut(*index))
     }
 
+    /// Returns the [`LotId`] associated with a given index. Returns `None` if
+    /// `index` is greater than or equal to the collections length.
     #[inline]
+    #[must_use]
     pub fn key(&self, index: usize) -> Option<LotId> {
         self.order.get(index).copied()
     }
 
+    /// Returns an iterator that returns all the contained values in this
+    /// collection as they're removed from the collection.
+    ///
+    /// Dropping the iterator will still result in the elements being removed.
     #[inline]
     pub fn drain(&mut self) -> Drain<'_, T, DrainAll> {
         Drain {
@@ -159,6 +238,13 @@ impl<T> OrderedLots<T> {
         }
     }
 
+    /// Returns an iterator that invokes `filter` for each item in the
+    /// collection. If `filter` returns true for that value, it will be removed
+    /// and returned from the iterator. When false is returned, the value is
+    /// kept in the collection.
+    ///
+    /// Dropping the iterator will still result in the filtered elements being
+    /// removed.
     #[inline]
     pub fn drain_filter<Filter>(&mut self, filter: Filter) -> Drain<'_, T, Filter>
     where
@@ -171,22 +257,30 @@ impl<T> OrderedLots<T> {
         }
     }
 
+    /// Returns the number of values contained in this collection.
     #[inline]
+    #[must_use]
     pub fn len(&self) -> usize {
         self.order.len()
     }
 
+    /// Returns true if this collection has no values.
     #[inline]
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.order.is_empty()
     }
 
+    /// Returns an iterator of references to all contained values.
     #[inline]
+    #[must_use]
     pub fn iter(&self) -> Iter<'_, T> {
         self.into_iter()
     }
 
+    /// Returns an `Iterator<Item = (LotId, &T)>` for all contained values.
     #[inline]
+    #[must_use]
     pub fn entries(&self) -> EntryIter<'_, T> {
         EntryIter {
             order: self.order.iter(),
@@ -239,6 +333,7 @@ impl<T> FromIterator<T> for OrderedLots<T> {
     }
 }
 
+/// An iterator over all values contained in an [`OrderedLots<T>`].
 #[derive(Clone)]
 pub struct Iter<'a, T> {
     order: slice::Iter<'a, LotId>,
@@ -255,6 +350,8 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
+/// An iterator over an [`OrderedLots<T>`] that returns each contained value and
+/// its associated [`LotId`].
 #[derive(Clone)]
 pub struct EntryIter<'a, T> {
     order: slice::Iter<'a, LotId>,
@@ -271,6 +368,7 @@ impl<'a, T> Iterator for EntryIter<'a, T> {
     }
 }
 
+/// An iterator over values being remoed from a [`OrderedLots<T>`].
 pub struct Drain<'a, T, Filter>
 where
     Filter: DrainFilter<T>,
@@ -325,6 +423,8 @@ impl<'a, T> IntoIterator for &'a OrderedLots<T> {
     }
 }
 
+/// An iterator that removes all values from the collection and frees the
+/// underlying collection.
 pub struct IntoIter<T> {
     order: vec::IntoIter<LotId>,
     slots: Lots<T>,
@@ -440,10 +540,10 @@ fn ordered_tests() {
         assert_eq!(ordered[2], 3);
     }
 
-    test_sorting_callback(|ordered| ordered.sort());
-    test_sorting_callback(|ordered| ordered.sort_unstable());
-    test_sorting_callback(|ordered| ordered.sort_by(|a, b| a.cmp(b)));
-    test_sorting_callback(|ordered| ordered.sort_unstable_by(|a, b| a.cmp(b)));
+    test_sorting_callback(OrderedLots::sort);
+    test_sorting_callback(OrderedLots::sort_unstable);
+    test_sorting_callback(|ordered| ordered.sort_by(Ord::cmp));
+    test_sorting_callback(|ordered| ordered.sort_unstable_by(Ord::cmp));
     test_sorting_callback(|ordered| ordered.sort_by_key(|a| *a));
     test_sorting_callback(|ordered| ordered.sort_by_cached_key(|a| *a));
     test_sorting_callback(|ordered| ordered.sort_unstable_by_key(|a| *a));
@@ -472,6 +572,11 @@ fn basics() {
     assert!(map.remove(first).is_none());
     let second = map.push(1);
     assert_eq!(map.remove(second), Some(1));
+
+    map.push(2);
+    assert_eq!(map.pop(), Some(2));
+    let fourth = map.push(3);
+    assert_eq!(map.pop_entry(), Some((fourth, 3)));
 }
 
 #[test]
@@ -505,7 +610,8 @@ fn drain_filter() {
 
 #[test]
 fn dbg() {
-    let map = OrderedLots::from_iter([1, 2]);
+    let mut map = OrderedLots::from_iter([1, 2, 3]);
+    let _: Option<i32> = map.pop();
     assert_eq!(alloc::format!("{map:?}"), "{LotId(0g1): 1, LotId(1g1): 2}");
 }
 

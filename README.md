@@ -61,16 +61,17 @@ similarly named structures. This crate takes two approaches that make it unique:
 - No unsafe code.
 - `LotId` is a single `usize`. Most slot maps use `usize` for indicies, and an
   additional `usize` for the generation.
-- Internally, the storage for each value only has an additional 2 bytes of
+- Internally, the storage for each value only has a maximum of 2 bytes of
   overhead, excluding padding the compiler may add. Most generational maps must
   store a `usize` for the generation, and many incur an additional byte of
   overhead due to using `Option<T>`.
 - The free list is a `Vec<usize>`, rather than attempting to reuse the empty
   slot's space. This was chosen for these advantages:
-  - Without unsafe, it's impossible to fit 48 bits of index data in the Empty
-    state without causing the `SlotData` enum to take up more space than it
-    currently does when `size_of::<T>()` is less than the size of a `usize`. For
-    example, the internal slot storage for `Lots<u16>` uses 4 bytes per value.
+  - Without unsafe on a 64-bit architecture, it's impossible to fit 48 bits of
+    index data in the Empty state without causing the `SlotData` enum to take up
+    more space than it currently does when `size_of::<T>()` is less than the
+    size of a `usize`. For example, the internal slot storage for `Lots<u16>`
+    uses 4 bytes per value.
   - Unless the collection is drained or undergoes large numbers of removals, the
     free list is usually short.
 

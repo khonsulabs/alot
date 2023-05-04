@@ -15,10 +15,10 @@ use crate::{Generation, LotId};
 ///
 /// ## Generation Checks
 ///
-/// A [`LotId`] contains 16 bits representing a Lot's [`Generation`]. Each time
-/// a Lot is updated, the Lot's generation is incremented (with wrapping).
+/// A [`LotId`] contains 16 bits representing a lot's generation. Each time a
+/// lot is updated, the lot's generation is incremented (with wrapping).
 ///
-/// The Lot's generation is checked when retrieving data using a [`LotId`]. If a
+/// The lot's generation is checked when retrieving data using a [`LotId`]. If a
 /// generation mismatch is found, the data will not be returned.
 ///
 /// While the chances of generation collision may be low, this is not a perfect
@@ -62,7 +62,9 @@ where
 }
 
 impl<T> Lots<T> {
+    /// Returns a new, empty collection.
     #[inline]
+    #[must_use]
     pub const fn new() -> Self {
         Self {
             slots: Vec::new(),
@@ -70,7 +72,10 @@ impl<T> Lots<T> {
         }
     }
 
+    /// Returns an empty collection that can hold `initial_capacity` values
+    /// without reallocation.
     #[inline]
+    #[must_use]
     pub fn with_capacity(initial_capacity: usize) -> Self {
         Self {
             slots: Vec::with_capacity(initial_capacity),
@@ -78,8 +83,10 @@ impl<T> Lots<T> {
         }
     }
 
+    /// Adds `value` to the collection, returning the value's unique [`LotId`].
     #[inline]
-    pub fn push(&mut self, initial_value: T) -> LotId {
+    #[allow(clippy::must_use_candidate)]
+    pub fn push(&mut self, value: T) -> LotId {
         if let Some((index, SlotData::Empty { generation })) = self
             .free_indicies
             .pop()
@@ -88,7 +95,7 @@ impl<T> Lots<T> {
             let generation = generation.next();
             self.slots[index] = SlotData::Populated {
                 generation,
-                contents: initial_value,
+                contents: value,
             };
             LotId::new(generation, index).expect("invalid lot id")
         } else {
@@ -96,19 +103,26 @@ impl<T> Lots<T> {
             let generation = Generation::first();
             self.slots.push(SlotData::Populated {
                 generation,
-                contents: initial_value,
+                contents: value,
             });
 
             LotId::new(generation, index).expect("invalid lot id")
         }
     }
 
+    /// Removes all values from the collection.
     #[inline]
     pub fn clear(&mut self) {
         self.drain();
     }
 
+    /// Looks up a previously stored value by its [`LotId`]. If the value hasn't
+    /// been removed, a reference will be returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
     #[inline]
+    #[must_use]
     pub fn get(&self, id: LotId) -> Option<&T> {
         match self.slots.get(id.index()) {
             Some(SlotData::Populated {
@@ -119,7 +133,13 @@ impl<T> Lots<T> {
         }
     }
 
+    /// Looks up a previously stored value by its [`LotId`]. If the value hasn't
+    /// been removed, a mutable reference will be returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
     #[inline]
+    #[must_use]
     pub fn get_mut(&mut self, id: LotId) -> Option<&mut T> {
         match self.slots.get_mut(id.index()) {
             Some(SlotData::Populated {
@@ -130,6 +150,11 @@ impl<T> Lots<T> {
         }
     }
 
+    /// Removes a previously stored value by its [`LotId`]. If the value is
+    /// present, it will be removed and returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
     #[inline]
     pub fn remove(&mut self, id: LotId) -> Option<T> {
         match self.slots.get_mut(id.index()) {
@@ -147,6 +172,10 @@ impl<T> Lots<T> {
         None
     }
 
+    /// Returns an iterator that returns all the contained values in this
+    /// collection as they're removed from the collection.
+    ///
+    /// Dropping the iterator will still result in the elements being removed.
     #[inline]
     pub fn drain(&mut self) -> Drain<'_, T, DrainAll> {
         Drain {
@@ -156,6 +185,13 @@ impl<T> Lots<T> {
         }
     }
 
+    /// Returns an iterator that invokes `filter` for each item in the
+    /// collection. If `filter` returns true for that value, it will be removed
+    /// and returned from the iterator. When false is returned, the value is
+    /// kept in the collection.
+    ///
+    /// Dropping the iterator will still result in the filtered elements being
+    /// removed.
     #[inline]
     pub fn drain_filter<Filter>(&mut self, filter: Filter) -> Drain<'_, T, Filter>
     where
@@ -168,22 +204,30 @@ impl<T> Lots<T> {
         }
     }
 
+    /// Returns the number of values contained in this collection.
     #[inline]
+    #[must_use]
     pub fn len(&self) -> usize {
         self.slots.len() - self.free_indicies.len()
     }
 
+    /// Returns true if this collection has no values.
     #[inline]
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.slots.len() == self.free_indicies.len()
     }
 
+    /// Returns an iterator of references to all contained values.
     #[inline]
+    #[must_use]
     pub fn iter(&self) -> Iter<'_, T> {
         self.into_iter()
     }
 
+    /// Returns an `Iterator<Item = (LotId, &T)>` for all contained values.
     #[inline]
+    #[must_use]
     pub fn entries(&self) -> EntryIter<'_, T> {
         EntryIter(self.slots.iter().enumerate())
     }
@@ -232,6 +276,7 @@ impl<T> SlotData<T> {
     }
 }
 
+/// An iterator over all values contained in a [`Lots<T>`].
 #[derive(Clone)]
 pub struct Iter<'a, T>(slice::Iter<'a, SlotData<T>>);
 
@@ -249,6 +294,8 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
+/// An iterator over a [`Lots<T>`] that returns each contained value and its
+/// associated [`LotId`].
 #[derive(Clone)]
 pub struct EntryIter<'a, T>(core::iter::Enumerate<slice::Iter<'a, SlotData<T>>>);
 
@@ -277,6 +324,7 @@ impl<'a, T> Iterator for EntryIter<'a, T> {
     }
 }
 
+/// An iterator over values being remoed from a [`Lots<T>`].
 pub struct Drain<'a, T, Filter>
 where
     Filter: DrainFilter<T>,
@@ -325,7 +373,10 @@ where
     }
 }
 
+/// A filter for a [`Drain`] iterator.
 pub trait DrainFilter<T> {
+    /// Return true if the value should be removed from the collection and
+    /// returned from the [`Drain`] iterator.
     fn filter(&mut self, value: &mut T) -> bool;
 }
 
@@ -339,6 +390,7 @@ where
     }
 }
 
+/// A [`DrainFilter`] that drains all elements from a collection.
 pub struct DrainAll;
 
 impl<T> DrainFilter<T> for DrainAll {
@@ -358,6 +410,8 @@ impl<'a, T> IntoIterator for &'a Lots<T> {
     }
 }
 
+/// An iterator that removes all values from the collection and frees the
+/// underlying collection.
 pub struct IntoIter<T>(vec::IntoIter<SlotData<T>>);
 
 impl<T> IntoIterator for Lots<T> {
@@ -461,7 +515,8 @@ fn drain_filter() {
 
 #[test]
 fn dbg() {
-    let map = Lots::from_iter([1, 2]);
+    let mut map = Lots::from_iter([1, 2, 3]);
+    map.remove(map.entries().last().unwrap().0);
     assert_eq!(alloc::format!("{map:?}"), "{LotId(0g1): 1, LotId(1g1): 2}");
 }
 
@@ -472,4 +527,11 @@ fn clone_and_eq() {
     assert_eq!(map, map2);
     map2.push(3);
     assert_ne!(map, map2);
+}
+
+#[test]
+fn out_of_bounds_id() {
+    let mut map = Lots::new();
+    let bad_key = map.push(1);
+    assert!(Lots::<i32>::new().remove(bad_key).is_none());
 }
