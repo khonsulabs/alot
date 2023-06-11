@@ -31,7 +31,7 @@ pub use unordered::Lots;
 /// returning a value. Because the generation isn't significantly wide, the
 /// generation can wrap and is not a perfect protection against stale data,
 /// although the likelihood of improper access is greatly reduced.
-#[derive(Clone, Copy, Eq, PartialEq, Hash)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct LotId(NonZeroUsize);
 
 impl Debug for LotId {
