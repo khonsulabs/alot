@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/ordered.rs`."><title>ordered.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alot" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a368898de 2023-05-02)" data-search-js="search-618e954b235f6acc.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alot/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/ordered.rs`."><title>ordered.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alot" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (7820972f8 2023-06-10)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alot/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -517,19 +517,130 @@
 <a href="#517" id="517">517</a>
 <a href="#518" id="518">518</a>
 <a href="#519" id="519">519</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::{slice, vec, vec::Vec};
-<span class="kw">use </span>core::{
-    cmp::Ordering,
-    fmt::Debug,
-    ops::{Index, IndexMut},
-};
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::Vec;
+<span class="kw">use </span>alloc::{slice, vec};
+<span class="kw">use </span>core::cmp::Ordering;
+<span class="kw">use </span>core::fmt::Debug;
+<span class="kw">use </span>core::ops::{Index, IndexMut};
 
-<span class="kw">use crate</span>::{
-    unordered::{DrainAll, DrainFilter, Lots},
-    LotId,
-};
+<span class="kw">use </span><span class="kw">crate</span>::unordered::{DrainAll, DrainFilter, Lots};
+<span class="kw">use </span><span class="kw">crate</span>::LotId;
 
-<span class="attr">#[derive(Clone)]
+<span class="doccomment">/// A collection of `T` values that maintains the order of elements.
+///
+/// This collection can be accessed by index (`usize`) or the [`LotId`] it is
+/// assigned upon insertion or pushing.
+///
+/// This collection has Vec-like performance except when removing elements by
+/// [`LotId`], which is an O(n) operation.
+</span><span class="attr">#[derive(Clone)]
+#[allow(clippy::module_name_repetitions)]
 </span><span class="kw">pub struct </span>OrderedLots&lt;T&gt; {
     slots: Lots&lt;T&gt;,
     order: Vec&lt;LotId&gt;,
@@ -543,7 +654,9 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; OrderedLots&lt;T&gt; {
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns a new, empty collection.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub const fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             slots: Lots::new(),
@@ -551,7 +664,10 @@
         }
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns an empty collection that can hold `initial_capacity` values
+    /// without reallocation.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>with_capacity(initial_capacity: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             slots: Lots::with_capacity(initial_capacity),
@@ -559,14 +675,38 @@
         }
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Adds `value` to the end of the collection, returning the value&#39;s unique
+    /// [`LotId`].
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) -&gt; LotId {
         <span class="kw">let </span>slot_id = <span class="self">self</span>.slots.push(value);
         <span class="self">self</span>.order.push(slot_id);
         slot_id
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Removes the last element of the collection, if one is present.
+    </span><span class="attr">#[inline]
+    #[must_use]
+    </span><span class="kw">pub fn </span>pop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
+        <span class="self">self</span>.pop_entry().map(|(<span class="kw">_</span>, v)| v)
+    }
+
+    <span class="doccomment">/// Removes the last element of the collection, if one is present.
+    </span><span class="attr">#[inline]
+    #[must_use]
+    </span><span class="kw">pub fn </span>pop_entry(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(LotId, T)&gt; {
+        <span class="self">self</span>.order
+            .pop()
+            .and_then(|id| <span class="self">self</span>.slots.remove(id).map(|v| (id, v)))
+    }
+
+    <span class="doccomment">/// Inserts `value` at `offset` inside of the collection.
+    ///
+    /// # Panics
+    ///
+    /// This funciton panics if offset is greater than the length of the
+    /// collection.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>insert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: usize, value: T) -&gt; LotId {
         <span class="comment">// Before modifying the map, check the only logic condition that will
         // panic.
@@ -576,7 +716,11 @@
         slot_id
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Removes the value with the associated [`LotId`], if found.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>remove(<span class="kw-2">&amp;mut </span><span class="self">self</span>, lot: LotId) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
         <span class="kw">let </span>value = <span class="self">self</span>.slots.remove(lot)<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>((index, <span class="kw">_</span>)) = <span class="self">self</span>.order.iter().enumerate().find(|(<span class="kw">_</span>, id)| <span class="kw-2">**</span>id == lot) {
@@ -585,7 +729,9 @@
         <span class="prelude-val">Some</span>(value)
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort()`] for more information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort(<span class="kw-2">&amp;mut </span><span class="self">self</span>)
     <span class="kw">where
         </span>T: Ord,
@@ -593,31 +739,39 @@
         <span class="self">self</span>.order.sort_by_key(|id| <span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]);
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort_by()`] for more information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort_by&lt;F: Fn(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, comparison: F) {
         <span class="self">self</span>.order
-            .sort_by(|a, b| comparison(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>a], <span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>b]))
+            .sort_by(|a, b| comparison(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>a], <span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>b]));
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort_by_key()`] for more information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort_by_key&lt;K, F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>f: F)
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; K,
         K: Ord,
     {
-        <span class="self">self</span>.order.sort_by_key(|id| f(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]))
+        <span class="self">self</span>.order.sort_by_key(|id| f(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]));
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort_by_cached_key()`] for more information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort_by_cached_key&lt;K, F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>f: F)
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; K,
         K: Ord,
     {
-        <span class="self">self</span>.order.sort_by_cached_key(|id| f(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]))
+        <span class="self">self</span>.order.sort_by_cached_key(|id| f(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]));
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort_unstable()`] for more information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort_unstable(<span class="kw-2">&amp;mut </span><span class="self">self</span>)
     <span class="kw">where
         </span>T: Ord,
@@ -625,51 +779,82 @@
         <span class="self">self</span>.order.sort_unstable_by_key(|id| <span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]);
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort_unstable_by()`] for more
+    /// information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort_unstable_by&lt;F: Fn(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, comparison: F) {
         <span class="self">self</span>.order
-            .sort_unstable_by(|a, b| comparison(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>a], <span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>b]))
+            .sort_unstable_by(|a, b| comparison(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>a], <span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>b]));
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Orders the elements in this collection leveraging the standard library&#39;s
+    /// sorting implementation. See [`slice::sort_unstable_by_key()`] for more
+    /// information.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>sort_unstable_by_key&lt;K, F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>f: F)
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; K,
         K: Ord,
     {
-        <span class="self">self</span>.order.sort_unstable_by_key(|id| f(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]))
+        <span class="self">self</span>.order.sort_unstable_by_key(|id| f(<span class="kw-2">&amp;</span><span class="self">self</span>.slots[<span class="kw-2">*</span>id]));
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Looks up a previously stored value by its [`LotId`]. If the value hasn&#39;t
+    /// been removed, a reference will be returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, id: LotId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt; {
         <span class="self">self</span>.slots.get(id)
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Looks up a previously stored value by its [`LotId`]. If the value hasn&#39;t
+    /// been removed, a mutable reference will be returned.
+    ///
+    /// Note: It is possible, but unlikely, for a [`LotId`] that has been
+    /// removed to be reused.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>get_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: LotId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>T&gt; {
         <span class="self">self</span>.slots.get_mut(id)
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Looks up a value by index. If `index` is greater than or equal to the
+    /// collections length, `None` will be returned.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>get_by_index(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt; {
         <span class="self">self</span>.order
             .get(index)
             .and_then(|index| <span class="self">self</span>.slots.get(<span class="kw-2">*</span>index))
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Looks up a mutable reference to a value by index. If `index` is greater
+    /// than or equal to the collections length, `None` will be returned.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>get_mut_by_index(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>T&gt; {
         <span class="self">self</span>.order
             .get(index)
             .and_then(|index| <span class="self">self</span>.slots.get_mut(<span class="kw-2">*</span>index))
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns the [`LotId`] associated with a given index. Returns `None` if
+    /// `index` is greater than or equal to the collections length.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>key(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; <span class="prelude-ty">Option</span>&lt;LotId&gt; {
         <span class="self">self</span>.order.get(index).copied()
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns an iterator that returns all the contained values in this
+    /// collection as they&#39;re removed from the collection.
+    ///
+    /// Dropping the iterator will still result in the elements being removed.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T, DrainAll&gt; {
         Drain {
             map: <span class="self">self</span>,
@@ -678,7 +863,14 @@
         }
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns an iterator that invokes `filter` for each item in the
+    /// collection. If `filter` returns true for that value, it will be removed
+    /// and returned from the iterator. When false is returned, the value is
+    /// kept in the collection.
+    ///
+    /// Dropping the iterator will still result in the filtered elements being
+    /// removed.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>drain_filter&lt;Filter&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: Filter) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T, Filter&gt;
     <span class="kw">where
         </span>Filter: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
@@ -690,22 +882,30 @@
         }
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns the number of values contained in this collection.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.order.len()
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns true if this collection has no values.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.order.is_empty()
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns an iterator of references to all contained values.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         <span class="self">self</span>.into_iter()
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns an `Iterator&lt;Item = (LotId, &amp;T)&gt;` for all contained values.
+    </span><span class="attr">#[inline]
+    #[must_use]
     </span><span class="kw">pub fn </span>entries(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EntryIter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         EntryIter {
             order: <span class="self">self</span>.order.iter(),
@@ -758,7 +958,8 @@
     }
 }
 
-<span class="attr">#[derive(Clone)]
+<span class="doccomment">/// An iterator over all values contained in an [`OrderedLots&lt;T&gt;`].
+</span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">&#39;a</span>, T&gt; {
     order: slice::Iter&lt;<span class="lifetime">&#39;a</span>, LotId&gt;,
     map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Lots&lt;T&gt;,
@@ -774,7 +975,9 @@
     }
 }
 
-<span class="attr">#[derive(Clone)]
+<span class="doccomment">/// An iterator over an [`OrderedLots&lt;T&gt;`] that returns each contained value and
+/// its associated [`LotId`].
+</span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>EntryIter&lt;<span class="lifetime">&#39;a</span>, T&gt; {
     order: slice::Iter&lt;<span class="lifetime">&#39;a</span>, LotId&gt;,
     map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Lots&lt;T&gt;,
@@ -790,7 +993,8 @@
     }
 }
 
-<span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt;
+<span class="doccomment">/// An iterator over values being remoed from a [`OrderedLots&lt;T&gt;`].
+</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt;
 <span class="kw">where
     </span>Filter: DrainFilter&lt;T&gt;,
 {
@@ -844,7 +1048,9 @@
     }
 }
 
-<span class="kw">pub struct </span>IntoIter&lt;T&gt; {
+<span class="doccomment">/// An iterator that removes all values from the collection and frees the
+/// underlying collection.
+</span><span class="kw">pub struct </span>IntoIter&lt;T&gt; {
     order: vec::IntoIter&lt;LotId&gt;,
     slots: Lots&lt;T&gt;,
 }
@@ -959,10 +1165,10 @@
         <span class="macro">assert_eq!</span>(ordered[<span class="number">2</span>], <span class="number">3</span>);
     }
 
-    test_sorting_callback(|ordered| ordered.sort());
-    test_sorting_callback(|ordered| ordered.sort_unstable());
-    test_sorting_callback(|ordered| ordered.sort_by(|a, b| a.cmp(b)));
-    test_sorting_callback(|ordered| ordered.sort_unstable_by(|a, b| a.cmp(b)));
+    test_sorting_callback(OrderedLots::sort);
+    test_sorting_callback(OrderedLots::sort_unstable);
+    test_sorting_callback(|ordered| ordered.sort_by(Ord::cmp));
+    test_sorting_callback(|ordered| ordered.sort_unstable_by(Ord::cmp));
     test_sorting_callback(|ordered| ordered.sort_by_key(|a| <span class="kw-2">*</span>a));
     test_sorting_callback(|ordered| ordered.sort_by_cached_key(|a| <span class="kw-2">*</span>a));
     test_sorting_callback(|ordered| ordered.sort_unstable_by_key(|a| <span class="kw-2">*</span>a));
@@ -991,6 +1197,11 @@
     <span class="macro">assert!</span>(map.remove(first).is_none());
     <span class="kw">let </span>second = map.push(<span class="number">1</span>);
     <span class="macro">assert_eq!</span>(map.remove(second), <span class="prelude-val">Some</span>(<span class="number">1</span>));
+
+    map.push(<span class="number">2</span>);
+    <span class="macro">assert_eq!</span>(map.pop(), <span class="prelude-val">Some</span>(<span class="number">2</span>));
+    <span class="kw">let </span>fourth = map.push(<span class="number">3</span>);
+    <span class="macro">assert_eq!</span>(map.pop_entry(), <span class="prelude-val">Some</span>((fourth, <span class="number">3</span>)));
 }
 
 <span class="attr">#[test]
@@ -1024,7 +1235,8 @@
 
 <span class="attr">#[test]
 </span><span class="kw">fn </span>dbg() {
-    <span class="kw">let </span>map = OrderedLots::from_iter([<span class="number">1</span>, <span class="number">2</span>]);
+    <span class="kw">let </span><span class="kw-2">mut </span>map = OrderedLots::from_iter([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+    <span class="kw">let _</span>: <span class="prelude-ty">Option</span>&lt;i32&gt; = map.pop();
     <span class="macro">assert_eq!</span>(<span class="macro">alloc::format!</span>(<span class="string">&quot;{map:?}&quot;</span>), <span class="string">&quot;{LotId(0g1): 1, LotId(1g1): 2}&quot;</span>);
 }
 

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["ordered","unordered"],"struct":["Generation","LotId"]};
+window.SIDEBAR_ITEMS = {"mod":["ordered","unordered"],"struct":["LotId"]};
