@@ -104,6 +104,16 @@ impl<T> OrderedLots<T> {
         Some(value)
     }
 
+    /// Removes the value at `index`, returning the [`LotId`] and value if
+    /// found.
+    #[inline]
+    #[allow(clippy::must_use_candidate)]
+    pub fn remove_by_index(&mut self, index: usize) -> Option<(LotId, T)> {
+        let id = *self.order.get(index)?;
+
+        self.remove(id).map(|value| (id, value))
+    }
+
     /// Orders the elements in this collection leveraging the standard library's
     /// sorting implementation. See [`slice::sort()`] for more information.
     #[inline]
@@ -215,6 +225,24 @@ impl<T> OrderedLots<T> {
         self.order
             .get(index)
             .and_then(|index| self.slots.get_mut(*index))
+    }
+
+    /// Returns the index of `id`, or None if the id is not contained in this
+    /// collection.
+    #[inline]
+    #[must_use]
+    pub fn index_of_id(&self, id: LotId) -> Option<usize> {
+        self.order
+            .iter()
+            .enumerate()
+            .find_map(|(index, &stored)| (stored == id).then_some(index))
+    }
+
+    /// Returns the id of the entry at `index`, or None if `index` is outside of
+    /// the bounds of this collection.
+    #[must_use]
+    pub fn id(&self, index: usize) -> Option<LotId> {
+        self.order.get(index).copied()
     }
 
     /// Returns the [`LotId`] associated with a given index. Returns `None` if
