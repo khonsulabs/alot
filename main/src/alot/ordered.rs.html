@@ -697,6 +697,16 @@
 <a href="#697" id="697">697</a>
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>alloc::{slice, vec};
 <span class="kw">use </span>core::cmp::Ordering;
@@ -1041,6 +1051,14 @@
     </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>last_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>T&gt; {
         <span class="self">self</span>.order.last().map(|<span class="kw-2">&amp;</span>index| <span class="kw-2">&amp;mut </span><span class="self">self</span>.slots[index])
+    }
+
+    <span class="doccomment">/// Swaps the elements at index `a` and `b`.
+    ///
+    /// Internally, this only moves a `LotId`. The underlying data does not
+    /// change, and its each value&#39;s associated `LotId` does not change.
+    </span><span class="kw">pub fn </span>swap(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: usize, b: usize) {
+        <span class="self">self</span>.order.swap(a, b);
     }
 }
 
@@ -1392,8 +1410,10 @@
     <span class="macro">assert_eq!</span>(map.first_mut(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut </span><span class="number">1</span>));
     <span class="macro">assert_eq!</span>(map.last_mut(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut </span><span class="number">2</span>));
 
-    <span class="macro">assert_eq!</span>(map.remove_by_index(<span class="number">0</span>), <span class="prelude-val">Some</span>((one, <span class="number">1</span>)));
-    <span class="macro">assert_eq!</span>(map.index_of_id(two), <span class="prelude-val">Some</span>(<span class="number">0</span>));
-    <span class="macro">assert_eq!</span>(map.index_of_id(one), <span class="prelude-val">None</span>);
+    map.swap(<span class="number">0</span>, <span class="number">1</span>);
+
+    <span class="macro">assert_eq!</span>(map.remove_by_index(<span class="number">0</span>), <span class="prelude-val">Some</span>((two, <span class="number">2</span>)));
+    <span class="macro">assert_eq!</span>(map.index_of_id(one), <span class="prelude-val">Some</span>(<span class="number">0</span>));
+    <span class="macro">assert_eq!</span>(map.index_of_id(two), <span class="prelude-val">None</span>);
 }
 </code></pre></div></section></main></body></html>
