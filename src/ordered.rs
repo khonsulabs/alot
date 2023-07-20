@@ -315,6 +315,34 @@ impl<T> OrderedLots<T> {
             map: &self.slots,
         }
     }
+
+    /// Returns the first entry in this collection, or None if the collection is
+    /// empty.
+    #[must_use]
+    pub fn first(&self) -> Option<&T> {
+        self.get_by_index(0)
+    }
+
+    /// Returns a mutable reference to the first entry in this collection, or
+    /// None if the collection is empty.
+    #[must_use]
+    pub fn first_mut(&mut self) -> Option<&mut T> {
+        self.get_mut_by_index(0)
+    }
+
+    /// Returns the last entry in this collection, or None if the collection is
+    /// empty.
+    #[must_use]
+    pub fn last(&self) -> Option<&T> {
+        self.order.last().map(|&index| &self.slots[index])
+    }
+
+    /// Returns a mutable reference to the last entry in this collection, or
+    /// None if the collection is empty.
+    #[must_use]
+    pub fn last_mut(&mut self) -> Option<&mut T> {
+        self.order.last().map(|&index| &mut self.slots[index])
+    }
 }
 
 impl<T> Index<LotId> for OrderedLots<T> {
@@ -650,4 +678,22 @@ fn clone_and_eq() {
     assert_eq!(map, map2);
     map2.sort();
     assert_ne!(map, map2);
+}
+
+#[test]
+fn index_ops() {
+    let mut map = OrderedLots::new();
+    let one = map.push(1);
+    let two = map.push(2);
+    assert_eq!(map.id(0), Some(one));
+    assert_eq!(map.index_of_id(two), Some(1));
+
+    assert_eq!(map.first(), Some(&1));
+    assert_eq!(map.last(), Some(&2));
+    assert_eq!(map.first_mut(), Some(&mut 1));
+    assert_eq!(map.last_mut(), Some(&mut 2));
+
+    assert_eq!(map.remove_by_index(0), Some((one, 1)));
+    assert_eq!(map.index_of_id(two), Some(0));
+    assert_eq!(map.index_of_id(one), None);
 }
