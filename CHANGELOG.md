@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OrderedLots::remove_by_index()` removes a value by its index.
 - `OrderedLots::index_of_id()` returns the index of a contained LotId.
 - `OrderedLots::id()` returns the LotId for a given index.
+- `OrderedLots::first()`/`first_mut()`/`last()`/`last_mut()` have been added to
+  return the first and last elements in the collection.
+- `OrderedLots::swap()` swaps the location of two values contained in the
+  collection.
 
 ## v0.2.0 (2023-06-21)
 

@@ -343,6 +343,14 @@ impl<T> OrderedLots<T> {
     pub fn last_mut(&mut self) -> Option<&mut T> {
         self.order.last().map(|&index| &mut self.slots[index])
     }
+
+    /// Swaps the elements at index `a` and `b`.
+    ///
+    /// Internally, this only moves a `LotId`. The underlying data does not
+    /// change, and its each value's associated `LotId` does not change.
+    pub fn swap(&mut self, a: usize, b: usize) {
+        self.order.swap(a, b);
+    }
 }
 
 impl<T> Index<LotId> for OrderedLots<T> {
@@ -693,7 +701,9 @@ fn index_ops() {
     assert_eq!(map.first_mut(), Some(&mut 1));
     assert_eq!(map.last_mut(), Some(&mut 2));
 
-    assert_eq!(map.remove_by_index(0), Some((one, 1)));
-    assert_eq!(map.index_of_id(two), Some(0));
-    assert_eq!(map.index_of_id(one), None);
+    map.swap(0, 1);
+
+    assert_eq!(map.remove_by_index(0), Some((two, 2)));
+    assert_eq!(map.index_of_id(one), Some(0));
+    assert_eq!(map.index_of_id(two), None);
 }
