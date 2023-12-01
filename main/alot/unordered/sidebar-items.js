@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Drain","DrainAll","EntryIter","IntoIter","Iter","Lots"],"trait":["DrainFilter"]};
+window.SIDEBAR_ITEMS = {"struct":["Drain","DrainAll","EntryIter","IntoIter","Iter","IterMut","Lots"],"trait":["DrainFilter"]};
