@@ -161,7 +161,11 @@ impl<T> Lots<T> {
             Some(lot) if lot.generation() == id.generation() => {
                 if let SlotData::Populated { .. } = lot {
                     let generation = lot.generation();
-                    let SlotData::Populated { contents, .. } = mem::replace(lot, SlotData::Empty { generation }) else { unreachable!() };
+                    let SlotData::Populated { contents, .. } =
+                        mem::replace(lot, SlotData::Empty { generation })
+                    else {
+                        unreachable!()
+                    };
                     self.free_indicies.push(id.index());
                     return Some(contents);
                 }
@@ -222,6 +226,13 @@ impl<T> Lots<T> {
     #[inline]
     #[must_use]
     pub fn iter(&self) -> Iter<'_, T> {
+        self.into_iter()
+    }
+
+    /// Returns an iterator of exclusive references to all contained values.
+    #[inline]
+    #[must_use]
+    pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         self.into_iter()
     }
 
@@ -294,6 +305,24 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
+/// An iterator providing exclusive access to all values contained in a
+/// [`Lots<T>`].
+pub struct IterMut<'a, T>(slice::IterMut<'a, SlotData<T>>);
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a mut T;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            match self.0.next()? {
+                SlotData::Empty { .. } => {}
+                SlotData::Populated { contents, .. } => return Some(contents),
+            }
+        }
+    }
+}
+
 /// An iterator over a [`Lots<T>`] that returns each contained value and its
 /// associated [`LotId`].
 #[derive(Clone)]
@@ -351,7 +380,11 @@ where
             {
                 if self.filter.filter(contents) {
                     let generation = *generation;
-                    let SlotData::Populated { contents, .. } = mem::replace(lot, SlotData::Empty{ generation }) else { unreachable!("just matched") };
+                    let SlotData::Populated { contents, .. } =
+                        mem::replace(lot, SlotData::Empty { generation })
+                    else {
+                        unreachable!("just matched")
+                    };
                     self.map.free_indicies.push(self.index);
                     return Some(contents);
                 }
@@ -407,6 +440,16 @@ impl<'a, T> IntoIterator for &'a Lots<T> {
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         Iter(self.slots.iter())
+    }
+}
+
+impl<'a, T> IntoIterator for &'a mut Lots<T> {
+    type IntoIter = IterMut<'a, T>;
+    type Item = &'a mut T;
+
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter {
+        IterMut(self.slots.iter_mut())
     }
 }
 
@@ -485,6 +528,7 @@ fn slot_reuse() {
 }
 
 #[test]
+#[allow(clippy::explicit_iter_loop)] // this was chosen for code coverage
 fn iteration() {
     let mut map = Lots::default();
     map.push(1);
@@ -497,8 +541,11 @@ fn iteration() {
 
     let values = map.iter().copied().collect::<Vec<_>>();
     assert_eq!(values, &[1, 3, 4]);
+    for value in map.iter_mut() {
+        *value += 1;
+    }
     let values = map.into_iter().collect::<Vec<_>>();
-    assert_eq!(values, &[1, 3, 4]);
+    assert_eq!(values, &[2, 4, 5]);
 }
 
 #[test]
