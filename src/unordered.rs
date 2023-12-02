@@ -3,7 +3,7 @@ use core::fmt::Debug;
 use core::ops::{Index, IndexMut};
 use core::{mem, slice};
 
-use crate::{Generation, LotId};
+use crate::{Assert, Generation, LotId};
 
 /// A collection of `T`, organized by generational [`LotId`]s.
 ///
@@ -97,7 +97,7 @@ impl<T> Lots<T> {
                 generation,
                 contents: value,
             };
-            LotId::new(generation, index).expect("invalid lot id")
+            LotId::new(generation, index).assert("invalid lot id")
         } else {
             let index = self.slots.len();
             let generation = Generation::first();
@@ -106,7 +106,7 @@ impl<T> Lots<T> {
                 contents: value,
             });
 
-            LotId::new(generation, index).expect("invalid lot id")
+            LotId::new(generation, index).assert("invalid lot id")
         }
     }
 

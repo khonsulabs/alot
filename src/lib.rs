@@ -10,6 +10,7 @@ pub mod ordered;
 /// An unordered collection of values, accessible by [`LotId`].
 pub mod unordered;
 
+use core::array;
 use core::fmt::{Debug, Write};
 use core::num::{NonZeroU16, NonZeroUsize};
 
@@ -111,18 +112,49 @@ impl LotId {
         let usize = match bytes.try_into() {
             Ok(bytes) => usize::from_be_bytes(bytes),
             Err(_) => match bytes.len() {
-                2 if usize::BITS >= 16 => expand_from_shorter::<16>(u16::from_be_bytes(
-                    bytes.try_into().expect("u16 is 2 bytes"),
-                ) as usize),
-                4 if usize::BITS >= 32 => expand_from_shorter::<32>(u32::from_be_bytes(
-                    bytes.try_into().expect("u32 is 4 bytes"),
-                ) as usize),
+                2 if usize::BITS >= 16 => {
+                    expand_from_shorter::<16>(u16::from_be_bytes(array::from_fn(|index| {
+                        bytes[index]
+                    })) as usize)
+                }
+                4 if usize::BITS >= 32 => {
+                    expand_from_shorter::<32>(u32::from_be_bytes(array::from_fn(|index| {
+                        bytes[index]
+                    })) as usize)
+                }
                 _ => return None,
             },
         };
-        #[allow(clippy::cast_possible_truncation)]
-        let _generation = NonZeroU16::new((usize >> Self::INDEX_BITS) as u16)?;
-        Some(Self(NonZeroUsize::new(usize).expect("generation checked")))
+
+        if usize >> Self::INDEX_BITS == 0 {
+            None
+        } else {
+            Some(Self(NonZeroUsize::new(usize).assert("generation checked")))
+        }
+    }
+}
+
+trait Assert {
+    type Unwrapped;
+    fn assert(self, msg: &str) -> Self::Unwrapped;
+}
+
+impl<T, E> Assert for Result<T, E>
+where
+    E: Debug,
+{
+    type Unwrapped = T;
+
+    fn assert(self, msg: &str) -> Self::Unwrapped {
+        self.expect(msg)
+    }
+}
+
+impl<T> Assert for Option<T> {
+    type Unwrapped = T;
+
+    fn assert(self, msg: &str) -> Self::Unwrapped {
+        self.expect(msg)
     }
 }
 
