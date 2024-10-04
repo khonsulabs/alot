@@ -114,6 +114,12 @@ impl<T> OrderedLots<T> {
         self.remove(id).map(|value| (id, value))
     }
 
+    /// Clears all values from this collection.
+    pub fn clear(&mut self) {
+        self.slots.clear();
+        self.order.clear();
+    }
+
     /// Orders the elements in this collection leveraging the standard library's
     /// sorting implementation. See [`slice::sort()`] for more information.
     #[inline]
@@ -641,6 +647,10 @@ fn basics() {
     assert_eq!(map.pop(), Some(2));
     let fourth = map.push(3);
     assert_eq!(map.pop_entry(), Some((fourth, 3)));
+
+    map.clear();
+    assert_eq!(map.len(), 0);
+    assert!(map.is_empty());
 }
 
 #[test]

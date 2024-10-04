@@ -363,7 +363,7 @@ where
     filter: Filter,
 }
 
-impl<'a, T, Filter> Iterator for Drain<'a, T, Filter>
+impl<T, Filter> Iterator for Drain<'_, T, Filter>
 where
     Filter: DrainFilter<T>,
 {
