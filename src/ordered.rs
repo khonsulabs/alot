@@ -120,6 +120,18 @@ impl<T> OrderedLots<T> {
         self.order.clear();
     }
 
+    /// Sets this collection's length to `new_len` if it is less than or equal
+    /// to the current length.
+    pub fn truncate(&mut self, new_len: usize) {
+        if new_len == 0 {
+            self.clear();
+        } else if new_len <= self.order.len() {
+            for to_remove in self.order.drain(new_len..) {
+                self.slots.remove(to_remove);
+            }
+        }
+    }
+
     /// Orders the elements in this collection leveraging the standard library's
     /// sorting implementation. See [`slice::sort()`] for more information.
     #[inline]

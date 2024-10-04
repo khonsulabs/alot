@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `OrderedLots::clear()` removes all entries from the collection.
+- `OrderedLots::truncate()` truncates the collection's length.
 
 ## v0.3.1 (2023-12-02)
 
