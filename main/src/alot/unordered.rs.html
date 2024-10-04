@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/unordered.rs`."><title>unordered.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alot" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9fad68599 2023-12-03)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/unordered.rs`."><title>unordered.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-d5c83a227aeda803.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alot" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0-nightly (9ff5fc4ff 2024-10-03)" data-channel="nightly" data-search-js="search-e056c65ede92db13.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">alot/</div>unordered.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -581,8 +582,7 @@
 <a href="#581" id="581">581</a>
 <a href="#582" id="582">582</a>
 <a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::{<span class="self">self</span>, Vec};
+<a href="#584" id="584">584</a></pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::{<span class="self">self</span>, Vec};
 <span class="kw">use </span>core::fmt::Debug;
 <span class="kw">use </span>core::ops::{Index, IndexMut};
 <span class="kw">use </span>core::{mem, slice};
@@ -599,15 +599,15 @@
 ///
 /// ## Generation Checks
 ///
-/// A [`LotId`] contains 16 bits representing a lot&#39;s generation. Each time a
-/// lot is updated, the lot&#39;s generation is incremented (with wrapping).
+/// A [`LotId`] contains 16 bits representing a lot's generation. Each time a
+/// lot is updated, the lot's generation is incremented (with wrapping).
 ///
-/// The lot&#39;s generation is checked when retrieving data using a [`LotId`]. If a
+/// The lot's generation is checked when retrieving data using a [`LotId`]. If a
 /// generation mismatch is found, the data will not be returned.
 ///
 /// While the chances of generation collision may be low, this is not a perfect
-/// check. Care should still be taken to ensure stale [`LotId`]s aren&#39;t used
-/// when other ways of validating the data don&#39;t exist.
+/// check. Care should still be taken to ensure stale [`LotId`]s aren't used
+/// when other ways of validating the data don't exist.
 </span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>Lots&lt;T&gt; {
     slots: Vec&lt;SlotData&lt;T&gt;&gt;,
@@ -636,7 +636,7 @@
 <span class="kw">where
     </span>T: Debug,
 {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; core::fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; core::fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>map = f.debug_map();
         <span class="kw">for </span>(id, value) <span class="kw">in </span><span class="self">self</span>.entries() {
             map.entry(<span class="kw-2">&amp;</span>id, <span class="kw-2">&amp;</span>value);
@@ -667,7 +667,7 @@
         }
     }
 
-    <span class="doccomment">/// Adds `value` to the collection, returning the value&#39;s unique [`LotId`].
+    <span class="doccomment">/// Adds `value` to the collection, returning the value's unique [`LotId`].
     </span><span class="attr">#[inline]
     #[allow(clippy::must_use_candidate)]
     </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) -&gt; LotId {
@@ -681,7 +681,7 @@
                 generation,
                 contents: value,
             };
-            LotId::new(generation, index).assert(<span class="string">&quot;invalid lot id&quot;</span>)
+            LotId::new(generation, index).assert(<span class="string">"invalid lot id"</span>)
         } <span class="kw">else </span>{
             <span class="kw">let </span>index = <span class="self">self</span>.slots.len();
             <span class="kw">let </span>generation = Generation::first();
@@ -690,7 +690,7 @@
                 contents: value,
             });
 
-            LotId::new(generation, index).assert(<span class="string">&quot;invalid lot id&quot;</span>)
+            LotId::new(generation, index).assert(<span class="string">"invalid lot id"</span>)
         }
     }
 
@@ -700,7 +700,7 @@
         <span class="self">self</span>.drain();
     }
 
-    <span class="doccomment">/// Looks up a previously stored value by its [`LotId`]. If the value hasn&#39;t
+    <span class="doccomment">/// Looks up a previously stored value by its [`LotId`]. If the value hasn't
     /// been removed, a reference will be returned.
     ///
     /// Note: It is possible, but unlikely, for a [`LotId`] that has been
@@ -717,7 +717,7 @@
         }
     }
 
-    <span class="doccomment">/// Looks up a previously stored value by its [`LotId`]. If the value hasn&#39;t
+    <span class="doccomment">/// Looks up a previously stored value by its [`LotId`]. If the value hasn't
     /// been removed, a mutable reference will be returned.
     ///
     /// Note: It is possible, but unlikely, for a [`LotId`] that has been
@@ -761,11 +761,11 @@
     </span>}
 
     <span class="doccomment">/// Returns an iterator that returns all the contained values in this
-    /// collection as they&#39;re removed from the collection.
+    /// collection as they're removed from the collection.
     ///
     /// Dropping the iterator will still result in the elements being removed.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T, DrainAll&gt; {
+    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">'_</span>, T, DrainAll&gt; {
         Drain {
             map: <span class="self">self</span>,
             index: <span class="number">0</span>,
@@ -781,7 +781,7 @@
     /// Dropping the iterator will still result in the filtered elements being
     /// removed.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>drain_filter&lt;Filter&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: Filter) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T, Filter&gt;
+    </span><span class="kw">pub fn </span>drain_filter&lt;Filter&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: Filter) -&gt; Drain&lt;<span class="lifetime">'_</span>, T, Filter&gt;
     <span class="kw">where
         </span>Filter: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
     {
@@ -809,21 +809,21 @@
     <span class="doccomment">/// Returns an iterator of references to all contained values.
     </span><span class="attr">#[inline]
     #[must_use]
-    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">'_</span>, T&gt; {
         <span class="self">self</span>.into_iter()
     }
 
     <span class="doccomment">/// Returns an iterator of exclusive references to all contained values.
     </span><span class="attr">#[inline]
     #[must_use]
-    </span><span class="kw">pub fn </span>iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; IterMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; IterMut&lt;<span class="lifetime">'_</span>, T&gt; {
         <span class="self">self</span>.into_iter()
     }
 
     <span class="doccomment">/// Returns an `Iterator&lt;Item = (LotId, &amp;T)&gt;` for all contained values.
     </span><span class="attr">#[inline]
     #[must_use]
-    </span><span class="kw">pub fn </span>entries(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EntryIter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>entries(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EntryIter&lt;<span class="lifetime">'_</span>, T&gt; {
         EntryIter(<span class="self">self</span>.slots.iter().enumerate())
     }
 }
@@ -833,14 +833,14 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, id: LotId) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Output {
-        <span class="self">self</span>.get(id).expect(<span class="string">&quot;id is not valid&quot;</span>)
+        <span class="self">self</span>.get(id).expect(<span class="string">"id is not valid"</span>)
     }
 }
 
 <span class="kw">impl</span>&lt;T&gt; IndexMut&lt;LotId&gt; <span class="kw">for </span>Lots&lt;T&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: LotId) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Output {
-        <span class="self">self</span>.get_mut(id).expect(<span class="string">&quot;id is not valid&quot;</span>)
+        <span class="self">self</span>.get_mut(id).expect(<span class="string">"id is not valid"</span>)
     }
 }
 
@@ -873,10 +873,10 @@
 
 <span class="doccomment">/// An iterator over all values contained in a [`Lots&lt;T&gt;`].
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">&#39;a</span>, T&gt;(slice::Iter&lt;<span class="lifetime">&#39;a</span>, SlotData&lt;T&gt;&gt;);
+</span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">'a</span>, T&gt;(slice::Iter&lt;<span class="lifetime">'a</span>, SlotData&lt;T&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Iterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Iterator <span class="kw">for </span>Iter&lt;<span class="lifetime">'a</span>, T&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -891,10 +891,10 @@
 
 <span class="doccomment">/// An iterator providing exclusive access to all values contained in a
 /// [`Lots&lt;T&gt;`].
-</span><span class="kw">pub struct </span>IterMut&lt;<span class="lifetime">&#39;a</span>, T&gt;(slice::IterMut&lt;<span class="lifetime">&#39;a</span>, SlotData&lt;T&gt;&gt;);
+</span><span class="kw">pub struct </span>IterMut&lt;<span class="lifetime">'a</span>, T&gt;(slice::IterMut&lt;<span class="lifetime">'a</span>, SlotData&lt;T&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Iterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Iterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">'a</span>, T&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -910,10 +910,10 @@
 <span class="doccomment">/// An iterator over a [`Lots&lt;T&gt;`] that returns each contained value and its
 /// associated [`LotId`].
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>EntryIter&lt;<span class="lifetime">&#39;a</span>, T&gt;(core::iter::Enumerate&lt;slice::Iter&lt;<span class="lifetime">&#39;a</span>, SlotData&lt;T&gt;&gt;&gt;);
+</span><span class="kw">pub struct </span>EntryIter&lt;<span class="lifetime">'a</span>, T&gt;(core::iter::Enumerate&lt;slice::Iter&lt;<span class="lifetime">'a</span>, SlotData&lt;T&gt;&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Iterator <span class="kw">for </span>EntryIter&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-    <span class="kw">type </span>Item = (LotId, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T);
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Iterator <span class="kw">for </span>EntryIter&lt;<span class="lifetime">'a</span>, T&gt; {
+    <span class="kw">type </span>Item = (LotId, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T);
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -928,7 +928,7 @@
                     },
                 ) =&gt; {
                     <span class="kw">return </span><span class="prelude-val">Some</span>((
-                        LotId::new(<span class="kw-2">*</span>generation, index).expect(<span class="string">&quot;stored lots have valid ids&quot;</span>),
+                        LotId::new(<span class="kw-2">*</span>generation, index).expect(<span class="string">"stored lots have valid ids"</span>),
                         contents,
                     ))
                 }
@@ -938,16 +938,16 @@
 }
 
 <span class="doccomment">/// An iterator over values being remoed from a [`Lots&lt;T&gt;`].
-</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt;
+</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">'a</span>, T, Filter&gt;
 <span class="kw">where
     </span>Filter: DrainFilter&lt;T&gt;,
 {
-    map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Lots&lt;T&gt;,
+    map: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Lots&lt;T&gt;,
     index: usize,
     filter: Filter,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt;
+<span class="kw">impl</span>&lt;T, Filter&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">'_</span>, T, Filter&gt;
 <span class="kw">where
     </span>Filter: DrainFilter&lt;T&gt;,
 {
@@ -967,7 +967,7 @@
                     <span class="kw">let </span>SlotData::Populated { contents, .. } =
                         mem::replace(lot, SlotData::Empty { generation })
                     <span class="kw">else </span>{
-                        <span class="macro">unreachable!</span>(<span class="string">&quot;just matched&quot;</span>)
+                        <span class="macro">unreachable!</span>(<span class="string">"just matched"</span>)
                     };
                     <span class="self">self</span>.map.free_indicies.push(<span class="self">self</span>.index);
                     <span class="kw">return </span><span class="prelude-val">Some</span>(contents);
@@ -979,7 +979,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt; Drop <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, T, Filter&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, Filter&gt; Drop <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, T, Filter&gt;
 <span class="kw">where
     </span>Filter: DrainFilter&lt;T&gt;,
 {
@@ -1017,9 +1017,9 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Lots&lt;T&gt; {
-    <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">&#39;a</span>, T&gt;;
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Lots&lt;T&gt; {
+    <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">'a</span>, T&gt;;
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
@@ -1027,9 +1027,9 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Lots&lt;T&gt; {
-    <span class="kw">type </span>IntoIter = IterMut&lt;<span class="lifetime">&#39;a</span>, T&gt;;
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Lots&lt;T&gt; {
+    <span class="kw">type </span>IntoIter = IterMut&lt;<span class="lifetime">'a</span>, T&gt;;
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
@@ -1148,7 +1148,7 @@
 </span><span class="kw">fn </span>dbg() {
     <span class="kw">let </span><span class="kw-2">mut </span>map = Lots::from_iter([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
     map.remove(map.entries().last().unwrap().<span class="number">0</span>);
-    <span class="macro">assert_eq!</span>(<span class="macro">alloc::format!</span>(<span class="string">&quot;{map:?}&quot;</span>), <span class="string">&quot;{LotId(0g1): 1, LotId(1g1): 2}&quot;</span>);
+    <span class="macro">assert_eq!</span>(<span class="macro">alloc::format!</span>(<span class="string">"{map:?}"</span>), <span class="string">"{LotId(0g1): 1, LotId(1g1): 2}"</span>);
 }
 
 <span class="attr">#[test]
