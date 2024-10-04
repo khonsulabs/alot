@@ -717,7 +717,19 @@
 <a href="#716" id="716">716</a>
 <a href="#717" id="717">717</a>
 <a href="#718" id="718">718</a>
-<a href="#719" id="719">719</a></pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::Vec;
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a></pre></div><pre class="rust"><code><span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>alloc::{slice, vec};
 <span class="kw">use </span>core::cmp::Ordering;
 <span class="kw">use </span>core::fmt::Debug;
@@ -837,6 +849,18 @@
     </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.slots.clear();
         <span class="self">self</span>.order.clear();
+    }
+
+    <span class="doccomment">/// Sets this collection's length to `new_len` if it is less than or equal
+    /// to the current length.
+    </span><span class="kw">pub fn </span>truncate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, new_len: usize) {
+        <span class="kw">if </span>new_len == <span class="number">0 </span>{
+            <span class="self">self</span>.clear();
+        } <span class="kw">else if </span>new_len &lt;= <span class="self">self</span>.order.len() {
+            <span class="kw">for </span>to_remove <span class="kw">in </span><span class="self">self</span>.order.drain(new_len..) {
+                <span class="self">self</span>.slots.remove(to_remove);
+            }
+        }
     }
 
     <span class="doccomment">/// Orders the elements in this collection leveraging the standard library's
